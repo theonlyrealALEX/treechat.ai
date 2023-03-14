@@ -1,19 +1,19 @@
 <html>
 
 <head>
-    <title>mall-helper</title>
+    <title>treechat.ai</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/botui/build/botui.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/botui/build/botui-theme-default.css" />
 </head>
 
 <body>
-    <div class="botui-app-containerx" id="fox">
+    <div class="botui-app-containerx" id="Tree">
         <bot-ui></bot-ui>
     </div>
     <script src="https://cdn.jsdelivr.net/vue/latest/vue.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/botui/build/botui.js"></script>
     <script>
-        var botui = new BotUI('fox');
+        var botui = new BotUI('Tree');
         var chat_history = new String("")
         var cnt = 0
 
@@ -29,13 +29,12 @@
                     human: false,
                     content: botResponse
                 }).then(function () {
-                    // Call sendMessage function again to continue conversation
                     if (cnt < 10) {
                         sendMessage();
                         cnt += 1
                     } else {
                         botui.message.add({
-                            content: "Thanks for using mall_helper :)"
+                            content: "Thanks for using TreeChat.ai"
                         })
                     }
                 })
@@ -43,7 +42,7 @@
         }
 
         botui.message.add({
-            content: "Welcome to Mall Helper"
+            content: "Welcome to TreeChat.ai"
         }).then(sendMessage())
 
     </script>
