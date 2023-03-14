@@ -16,17 +16,22 @@
         var botui = new BotUI('Tree');
         var chat_history = new String("")
         var cnt = 0
+        var answer = ""
 
-        //START: Test Code for API
-        const data = { message: "hey" };
-        fetch('http://localhost:3000/input', body = JSON.stringify(data))
-            .then(response => response.json())
-            .then(data => {
-                // Use the data here
+        function getGPTResponse(input) {
+            fetch('http://localhost:3000/input', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(input)
             })
-            .catch(error => console.error(error));
-
-        //END: Test Code for API
+                .then(response => response.json())
+                .then(data => {
+                    answer = data.answer;
+                })
+                .catch(error => console.error(error))
+        }
 
         function sendMessage() {
             botui.action.text({
@@ -34,21 +39,24 @@
                     placeholder: 'Enter your Question'
                 }
             }).then(function (input) {
-                var botResponse = input.value // call backend
-
+                getGPTResponse({ message: input })//call backend
+                console.log(answer)
+            }).then(input => {
                 botui.message.add({
+                    loading: true,
                     human: false,
-                    content: botResponse
-                }).then(function () {
-                    if (cnt < 10) {
-                        sendMessage();
-                        cnt += 1
-                    } else {
-                        botui.message.add({
-                            content: "Thanks for using TreeChat.ai"
-                        })
-                    }
+                    content: answer,
                 })
+                    .then(function () {
+                        if (cnt < 10) {
+                            sendMessage();
+                            cnt += 1
+                        } else {
+                            botui.message.add({
+                                content: "Thanks for using TreeChat.ai"
+                            })
+                        }
+                    })
             });
         }
 

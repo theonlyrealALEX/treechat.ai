@@ -10,10 +10,13 @@ app.get('/', async (request, response) => {
     response.send(await readFile('./home.html', 'utf8'));
 });
 
-app.get('/input', async (request, response) => {
+app.post('/input', async (request, response) => {
     const { message } = request.body;
+    console.log(message)
+    //do chatgpt magic here with message :)
     if (!message) {
         response.status(418).send();
+        return;
     }
     response.send({
         "answer": 'chatgptoutput'
