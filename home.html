@@ -17,6 +17,17 @@
         var chat_history = new String("")
         var cnt = 0
 
+        //START: Test Code for API
+        const data = { message: "hey" };
+        fetch('http://localhost:3000/input', body = JSON.stringify(data))
+            .then(response => response.json())
+            .then(data => {
+                // Use the data here
+            })
+            .catch(error => console.error(error));
+
+        //END: Test Code for API
+
         function sendMessage() {
             botui.action.text({
                 action: {
