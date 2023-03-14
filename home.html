@@ -1,0 +1,52 @@
+<html>
+
+<head>
+    <title>mall-helper</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/botui/build/botui.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/botui/build/botui-theme-default.css" />
+</head>
+
+<body>
+    <div class="botui-app-containerx" id="fox">
+        <bot-ui></bot-ui>
+    </div>
+    <script src="https://cdn.jsdelivr.net/vue/latest/vue.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/botui/build/botui.js"></script>
+    <script>
+        var botui = new BotUI('fox');
+        var chat_history = new String("")
+        var cnt = 0
+
+        function sendMessage() {
+            botui.action.text({
+                action: {
+                    placeholder: 'Enter your Question'
+                }
+            }).then(function (input) {
+                var botResponse = input.value // call backend
+
+                botui.message.add({
+                    human: false,
+                    content: botResponse
+                }).then(function () {
+                    // Call sendMessage function again to continue conversation
+                    if (cnt < 10) {
+                        sendMessage();
+                        cnt += 1
+                    } else {
+                        botui.message.add({
+                            content: "Thanks for using mall_helper :)"
+                        })
+                    }
+                })
+            });
+        }
+
+        botui.message.add({
+            content: "Welcome to Mall Helper"
+        }).then(sendMessage())
+
+    </script>
+</body>
+
+</html>
