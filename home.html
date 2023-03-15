@@ -19,11 +19,13 @@
         var answer = ""
         const treeAPIAddress = 'https://tree-chat-ai.ey.r.appspot.com'
         const localAPIAddress = 'http://localhost:3001'
-        const currentAPIAddress = localAPIAddress;
-
-        let sID; // Declare the variable outside the async function
+        const currentAPIAddress = treeAPIAddress;
+        let sID;
 
         async function getSessionID() {
+            if (sID) {
+                return;
+            }
             sID = await (async () => {
                 try {
                     const response = await fetch("/getSessionID");
@@ -38,13 +40,13 @@
             })();
         }
 
-        function getGPTResponse(input) {
+        /*function getGPTResponse(input) {
             fetch(currentAPIAddress + "/input", {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(input)
+                body: JSON.stringify({ input, sID }) // Include the sessionId in the request body
             })
                 .then(response => response.json())
                 .then(data => {
@@ -52,47 +54,90 @@
                     console.log(answer['content'])
                 })
                 .catch(error => console.error(error))
+        }*/
+        async function getGPTResponse(input) {
+            try {
+                const response = await fetch(currentAPIAddress + "/input", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ input, sID }) // Include the sessionId in the request body
+                });
+
+                const data = await response.json();
+                //console.log(data);
+                return data;
+            } catch (error) {
+                console.error(error);
+            }
         }
 
-        function sendMessage() {
-            //console.log("Session ID:", sID);
+        /*function sendMessage() {
             botui.action.text({
                 action: {
                     placeholder: 'Enter your Question'
                 }
-            }).then(function (input) {
-                console.log(input)
-                if (!sID) {
-                    getSessionID().then(function () { console.log(sID, "Session ID") }).then(getGPTResponse(input))
-                } else {
-                    getGPTResponse(input)//call backend
-                }
-                console.log(answer)
-            }).then(input => {
-                botui.message.add({
-                    loading: true,
-                    human: false,
-                    content: answer['content'],
-                })
-                    .then(function () {
-                        if (cnt < 10) {
-                            sendMessage();
-                            cnt += 1
-                        } else {
-                            botui.message.add({
-                                content: "Thanks for using TreeChat.ai"
-                            })
-                        }
+            })
+                .then(async function (input) {
+                    console.log(input)
+                    if (!sID) {
+                        getSessionID().then(function () { console.log(sID, "Session ID") }).then(getGPTResponse(input))
+                    } else {
+                        getGPTResponse(input)
+                    }
+                    console.log(answer)
+                }).then(input => {
+                    botui.message.add({
+                        loading: true,
+                        human: false,
+                        content: answer['content'],
                     })
-            });
+                        .then(function () {
+                            if (cnt < 10) {
+                                sendMessage();
+                                cnt += 1
+                            } else {
+                                botui.message.add({
+                                    content: "Thanks for using TreeChat.ai"
+                                })
+                            }
+                        })
+                });
         }
+        */
 
+        function sendMessage() {
+            botui.action.text({
+                action: {
+                    placeholder: 'Enter your Question'
+                }
+            })
+                .then((text) => {
+                    botui.message.add({
+                        loading: false, //TRUE makes a loading animation, but i won't go away when the message arrives, so sth has to be done about it
+                        human: false,
+                        content: "Fetching Response",
+                    })
+                    return text;
+                })
+                .then((text) => getGPTResponse(text))
+                .then((gptOutput) => {
+                    const contentGPT = gptOutput['content']
+                    console.log(contentGPT)
+
+                    botui.message.add({
+                        loading: false,
+                        human: false,
+                        content: contentGPT,
+                    })
+                    sendMessage();
+                })
+        }
         botui.message.add({
             content: "Welcome to TreeChat.ai"
-        }).then(sendMessage())
-            /*.then(getSessionID().then(function () {
-console.log("Session ID:", sID);
-}))*/
+        }).then(getSessionID())
+            .then(sendMessage())
     </script>
 </body>
 

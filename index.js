@@ -62,19 +62,22 @@ app.get('/', async (request, response) => {
 });
 
 app.post('/input', async (request, response) => {
-    console.log(request.body['value'])
+    //console.log(request.body)
     if (!request.body) {
         response.status(418).send();
         return;
     }
-    const completionMessage = await getCompletion(request.body['value']);
+    console.log('Body:')
+    console.log(request.body['sID']);
+    console.log(request.body['input']['value']);
+    const completionMessage = await getCompletion(request.body['input']['value']);
     response.send(completionMessage);
     console.log("API response sucessfully sent out")
 });
 
 app.get('/getSessionID', async (request, response) => {
     const sessionId = generateSessionId();
-    console.log('Session ID:', sessionId);
+    console.log('Session ID sent to User:', sessionId);
     response.send(sessionId);
 })
 
