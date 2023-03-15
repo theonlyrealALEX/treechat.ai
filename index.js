@@ -4,34 +4,48 @@ const { IncomingMessage } = require('http');
 const { readFile } = require('fs').promises;
 const { Configuration, OpenAIApi } = require("openai");
 const { apiKey } = require('./api_key.js');
+const fs = require('fs');
 const app = express();
-
 const configuration = new Configuration({
     apiKey: apiKey,
 });
 
-//TEST STARt
-async function testCompletion() {
-    const openai = new OpenAIApi(configuration);
+const dataPA = fs.readFileSync('data.csv', 'utf8', (err, data) => {
+    if (err) {
+        console.error('An error occurred while reading the Data file:', err);
+        return;
+    }
+    //
+});
 
-    const completion = await openai.createChatCompletion({
-        model: "gpt-3.5-turbo",
-        messages: [{ 'role': "user", "content": "How are you?" }],
-    });
-    console.log(completion.data.choices[0].message);
-}
-// Call the async function
-//testCompletion();
-//TEST END
+const setUpCommand = fs.readFileSync('set_up_command', 'utf8', (err, data) => {
+    if (err) {
+        console.error('An error occurred while reading the Command file:', err);
+        return;
+    }
+    //
+});
+
+var initialMessage = async function () {
+    return [
+        { 'role': "user", "content": setUpCommand },
+        { 'role': "user", "content": dataPA }
+    ];
+};
 
 async function getCompletion(inputMessage) {
     const openai = new OpenAIApi(configuration);
+
+    const messages = await initialMessage(); // Call the initialMessage function and await its result
+    messages.push({ 'role': "user", "content": inputMessage }); // Now you can use push() on the returned array
+
     const completion = await openai.createChatCompletion({
         model: "gpt-3.5-turbo",
-        messages: [{ 'role': "user", "content": inputMessage }],
+        messages: messages,
     });
-    console.log(completion.data.choices[0].message)
-    console.log("API Call sucessfull")
+
+    console.log(completion.data.choices[0].message);
+    console.log("API Call successful");
     return completion.data.choices[0].message;
 }
 

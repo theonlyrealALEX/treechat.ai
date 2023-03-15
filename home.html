@@ -17,9 +17,11 @@
         var chat_history = new String("")
         var cnt = 0
         var answer = ""
+        var treeAPIAddress = 'https://tree-chat-ai.ey.r.appspot.com/input'
+        var localAPIAddress = 'http://localhost:3000/input'
 
         function getGPTResponse(input) {
-            fetch('http://localhost:3000/input', {
+            fetch(localAPIAddress, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
