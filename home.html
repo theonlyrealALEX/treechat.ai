@@ -2,8 +2,9 @@
 
 <head>
     <title>treechat.ai</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/botui/build/botui.min.css" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/botui/build/botui-theme-default.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="http://localhost:3001/stylesheet.css" />
+    <link rel="stylesheet" href="http://localhost:3001/default_theme.css" />
 </head>
 
 <body>
@@ -13,13 +14,24 @@
     <script src="https://cdn.jsdelivr.net/vue/latest/vue.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/botui/build/botui.js"></script>
     <script>
+        /*
+            <link rel="stylesheet" href="http://localhost:3001/stylesheet.css" />
+            <link rel="stylesheet" href="http://localhost:3001/default_theme.css" />
+
+            <link rel="stylesheet" href="https://tree-chat-ai.ey.r.appspot.com/stylesheet.css" />
+            <link rel="stylesheet" href="https://tree-chat-ai.ey.r.appspot.com/default_theme.css" />
+        */
+
+        //https://cdn.jsdelivr.net/npm/botui/build/botui.min.css
+        //https://cdn.jsdelivr.net/npm/botui/build/botui-theme-default.css
+
         var botui = new BotUI('Tree');
         var chat_history = new String("")
         var cnt = 0
         var answer = ""
         const treeAPIAddress = 'https://tree-chat-ai.ey.r.appspot.com'
         const localAPIAddress = 'http://localhost:3001'
-        const currentAPIAddress = treeAPIAddress;
+        const currentAPIAddress = localAPIAddress;
         let sID;
 
         async function getSessionID() {
@@ -40,21 +52,6 @@
             })();
         }
 
-        /*function getGPTResponse(input) {
-            fetch(currentAPIAddress + "/input", {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ input, sID }) // Include the sessionId in the request body
-            })
-                .then(response => response.json())
-                .then(data => {
-                    answer = data;
-                    console.log(answer['content'])
-                })
-                .catch(error => console.error(error))
-        }*/
         async function getGPTResponse(input) {
             try {
                 const response = await fetch(currentAPIAddress + "/input", {
@@ -72,40 +69,6 @@
                 console.error(error);
             }
         }
-
-        /*function sendMessage() {
-            botui.action.text({
-                action: {
-                    placeholder: 'Enter your Question'
-                }
-            })
-                .then(async function (input) {
-                    console.log(input)
-                    if (!sID) {
-                        getSessionID().then(function () { console.log(sID, "Session ID") }).then(getGPTResponse(input))
-                    } else {
-                        getGPTResponse(input)
-                    }
-                    console.log(answer)
-                }).then(input => {
-                    botui.message.add({
-                        loading: true,
-                        human: false,
-                        content: answer['content'],
-                    })
-                        .then(function () {
-                            if (cnt < 10) {
-                                sendMessage();
-                                cnt += 1
-                            } else {
-                                botui.message.add({
-                                    content: "Thanks for using TreeChat.ai"
-                                })
-                            }
-                        })
-                });
-        }
-        */
 
         function sendMessage() {
             botui.action.text({

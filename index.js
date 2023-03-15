@@ -1,6 +1,6 @@
 const { response } = require('express');
 const express = require('express');
-const { IncomingMessage } = require('http');
+const { IncomingMessage, request } = require('http');
 const { readFile } = require('fs').promises;
 const { Configuration, OpenAIApi } = require("openai");
 const { apiKey } = require('./api_key.js');
@@ -24,6 +24,20 @@ const setUpCommand = fs.readFileSync('set_up_command', 'utf8', (err, data) => {
         return;
     }
     //
+});
+
+const styleSheet = fs.readFileSync('stylesheet.css', 'utf8', (err, data) => {
+    if (err) {
+        console.error('An error occurred while reading the Stylesheet file:', err);
+        return;
+    }
+});
+
+const defaultTheme = fs.readFileSync('default_theme.css', 'utf8', (err, data) => {
+    if (err) {
+        console.error('An error occurred while reading the Stylesheet file:', err);
+        return;
+    }
 });
 
 var initialMessage = async function () {
@@ -79,6 +93,16 @@ app.get('/getSessionID', async (request, response) => {
     const sessionId = generateSessionId();
     console.log('Session ID sent to User:', sessionId);
     response.send(sessionId);
+})
+
+app.get('/stylesheet.css', async (request, response) => {
+    response.send(styleSheet);
+    console.log("Supplied Style Sheet");
+})
+
+app.get('/default_theme.css', async (request, response) => {
+    response.send(defaultTheme);
+    console.log("Supplied Style Sheet");
 })
 
 app.listen(process.env.PORT || 3001, () => console.log('App available at http://localhost:3001'))
