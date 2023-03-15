@@ -47,19 +47,42 @@ var initialMessage = async function () {
     ];
 };
 
-async function getCompletion(inputMessage) {
+async function getCompletion(inputMessage, sID) {
     const openai = new OpenAIApi(configuration);
 
-    const messages = await initialMessage(); // Call the initialMessage function and await its result
-    messages.push({ 'role': "user", "content": inputMessage }); // Now you can use push() on the returned array
+    console.log("getCompletion Args:", inputMessage, sID)
+
+    let tmpMessage;
+
+    if (!sessionDB[sID]) {
+        const initialMessages = await initialMessage();
+        initialMessages.push({ 'role': "user", "content": inputMessage });
+        sessionDB[sID] = initialMessages;
+    } else {
+        old_message = sessionDB[sID];
+        old_message.push({ 'role': "user", "content": inputMessage });
+        sessionDB[sID] = old_message;
+    }
+
+    /*
+    const messages = await initialMessage();
+    messages.push({ 'role': "user", "content": inputMessage });
+    console.log("messages structure:");
+    console.log(messages);
+    */
 
     const completion = await openai.createChatCompletion({
         model: "gpt-3.5-turbo",
-        messages: messages,
+        messages: sessionDB[sID],
     });
 
-    console.log(completion.data.choices[0].message);
     console.log("API Call successful");
+    old_message = sessionDB[sID];
+
+    old_message.push(completion.data.choices[0].message);
+    sessionDB[sID] = old_message;
+    console.log(sessionDB[sID], sID)
+
     return completion.data.choices[0].message;
 }
 function generateSessionId() {
@@ -84,7 +107,7 @@ app.post('/input', async (request, response) => {
     console.log('Body:')
     console.log(request.body['sID']);
     console.log(request.body['input']['value']);
-    const completionMessage = await getCompletion(request.body['input']['value']);
+    const completionMessage = await getCompletion(request.body['input']['value'], request.body['sID']);
     response.send(completionMessage);
     console.log("API response sucessfully sent out")
 });
@@ -104,5 +127,7 @@ app.get('/default_theme.css', async (request, response) => {
     response.send(defaultTheme);
     console.log("Supplied Style Sheet");
 })
+
+var sessionDB = { sID: { 'role': "user", "content": "Repeat: How can I help you?" } };
 
 app.listen(process.env.PORT || 3001, () => console.log('App available at http://localhost:3001'))
