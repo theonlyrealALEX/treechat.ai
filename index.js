@@ -48,6 +48,12 @@ async function getCompletion(inputMessage) {
     console.log("API Call successful");
     return completion.data.choices[0].message;
 }
+function generateSessionId() {
+    const timestamp = new Date().getTime();
+    const randomNum = Math.random().toString(36).substring(2);
+    return `${timestamp}-${randomNum}`;
+}
+
 
 app.use(express.json())
 
@@ -66,4 +72,10 @@ app.post('/input', async (request, response) => {
     console.log("API response sucessfully sent out")
 });
 
-app.listen(process.env.PORT || 3000, () => console.log('App available at http://localhost:3000'))
+app.get('/getSessionID', async (request, response) => {
+    const sessionId = generateSessionId();
+    console.log('Session ID:', sessionId);
+    response.send(sessionId);
+})
+
+app.listen(process.env.PORT || 3001, () => console.log('App available at http://localhost:3001'))

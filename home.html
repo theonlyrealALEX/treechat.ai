@@ -17,11 +17,29 @@
         var chat_history = new String("")
         var cnt = 0
         var answer = ""
-        var treeAPIAddress = 'https://tree-chat-ai.ey.r.appspot.com/input'
-        var localAPIAddress = 'http://localhost:3000/input'
+        const treeAPIAddress = 'https://tree-chat-ai.ey.r.appspot.com'
+        const localAPIAddress = 'http://localhost:3001'
+        const currentAPIAddress = localAPIAddress;
+
+        let sID; // Declare the variable outside the async function
+
+        async function getSessionID() {
+            sID = await (async () => {
+                try {
+                    const response = await fetch("/getSessionID");
+                    if (response.ok) {
+                        return await response.text();
+                    } else {
+                        console.error("Error fetching session ID:", response.status, response.statusText);
+                    }
+                } catch (err) {
+                    console.error("Error calling /getSessionID API:", err);
+                }
+            })();
+        }
 
         function getGPTResponse(input) {
-            fetch(localAPIAddress, {
+            fetch(currentAPIAddress + "/input", {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -37,13 +55,18 @@
         }
 
         function sendMessage() {
+            //console.log("Session ID:", sID);
             botui.action.text({
                 action: {
                     placeholder: 'Enter your Question'
                 }
             }).then(function (input) {
                 console.log(input)
-                getGPTResponse(input)//call backend
+                if (!sID) {
+                    getSessionID().then(function () { console.log(sID, "Session ID") }).then(getGPTResponse(input))
+                } else {
+                    getGPTResponse(input)//call backend
+                }
                 console.log(answer)
             }).then(input => {
                 botui.message.add({
@@ -67,7 +90,9 @@
         botui.message.add({
             content: "Welcome to TreeChat.ai"
         }).then(sendMessage())
-
+            /*.then(getSessionID().then(function () {
+console.log("Session ID:", sID);
+}))*/
     </script>
 </body>
 
