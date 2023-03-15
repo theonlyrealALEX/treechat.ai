@@ -135,8 +135,14 @@
                 })
         }
         botui.message.add({
-            content: "Welcome to TreeChat.ai"
-        }).then(getSessionID())
+            content: "Welcome to TreeChat.ai."
+        })
+            .then(function () {
+                botui.message.add({
+                    content: "Ask me some questions about the Pasinger Arcaden."
+                })
+            })
+            .then(getSessionID())
             .then(sendMessage())
     </script>
 </body>
