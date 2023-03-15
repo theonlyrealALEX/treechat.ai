@@ -28,7 +28,8 @@
             })
                 .then(response => response.json())
                 .then(data => {
-                    answer = data.answer;
+                    answer = data;
+                    console.log(answer['content'])
                 })
                 .catch(error => console.error(error))
         }
@@ -39,13 +40,14 @@
                     placeholder: 'Enter your Question'
                 }
             }).then(function (input) {
-                getGPTResponse({ message: input })//call backend
+                console.log(input)
+                getGPTResponse(input)//call backend
                 console.log(answer)
             }).then(input => {
                 botui.message.add({
                     loading: true,
                     human: false,
-                    content: answer,
+                    content: answer['content'],
                 })
                     .then(function () {
                         if (cnt < 10) {
