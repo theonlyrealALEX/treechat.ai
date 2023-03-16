@@ -2,7 +2,7 @@
 
 .botui-container {
     font-size: 14px;
-    background-color: #ffffff;
+    background-color: #fff;
     font-family: "Open Sans", sans-serif;
 }
 
@@ -22,12 +22,12 @@
     padding: 7px 13px;
     border-radius: 15px;
     color: #595a59;
-    background-color: #deede1;
+    background-color: #ebebeb;
 }
 
 .botui-message-content.human {
     color: #f7f8f8;
-    background-color: #537859;
+    background-color: #919292;
 }
 
 .botui-message-content.text {
@@ -81,7 +81,7 @@
     padding: 7px 15px;
     border-radius: 4px;
     font-family: "Open Sans", sans-serif;
-    background: #537859;
+    background: #777979;
     box-shadow: 2px 3px 4px 0 rgba(0, 0, 0, .25);
 }
 
