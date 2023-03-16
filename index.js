@@ -15,7 +15,6 @@ const dataPA = fs.readFileSync('data.csv', 'utf8', (err, data) => {
         console.error('An error occurred while reading the Data file:', err);
         return;
     }
-    //
 });
 
 const setUpCommand = fs.readFileSync('set_up_command', 'utf8', (err, data) => {
@@ -23,7 +22,6 @@ const setUpCommand = fs.readFileSync('set_up_command', 'utf8', (err, data) => {
         console.error('An error occurred while reading the Command file:', err);
         return;
     }
-    //
 });
 
 const styleSheet = fs.readFileSync('stylesheet.css', 'utf8', (err, data) => {
@@ -41,49 +39,40 @@ const defaultTheme = fs.readFileSync('default_theme.css', 'utf8', (err, data) =>
 });
 
 var initialMessage = async function () {
-    return [
-        { 'role': "user", "content": setUpCommand },
-        { 'role': "user", "content": dataPA }
-    ];
+    try {
+        return [
+            { 'role': "system", "content": setUpCommand },
+            { 'role': "system", "content": dataPA }
+        ];
+    } catch {
+        console.log("Error in reading intialMessage; Check setUpCommand and dataPA");
+    }
 };
 
 async function getCompletion(inputMessage, sID) {
     const openai = new OpenAIApi(configuration);
-
-    console.log("getCompletion Args:", inputMessage, sID)
-
-    let tmpMessage;
-
-    if (!sessionDB[sID]) {
-        const initialMessages = await initialMessage();
-        initialMessages.push({ 'role': "user", "content": inputMessage });
-        sessionDB[sID] = initialMessages;
-    } else {
+    try {
         old_message = sessionDB[sID];
         old_message.push({ 'role': "user", "content": inputMessage });
         sessionDB[sID] = old_message;
+    } catch {
+        const initialMessages = await initialMessage();
+        initialMessages.push({ 'role': "user", "content": inputMessage });
+        sessionDB[sID] = initialMessages;
     }
-
-    /*
-    const messages = await initialMessage();
-    messages.push({ 'role': "user", "content": inputMessage });
-    console.log("messages structure:");
-    console.log(messages);
-    */
-
-    const completion = await openai.createChatCompletion({
-        model: "gpt-3.5-turbo",
-        messages: sessionDB[sID],
-    });
-
-    console.log("API Call successful");
-    old_message = sessionDB[sID];
-
-    old_message.push(completion.data.choices[0].message);
-    sessionDB[sID] = old_message;
-    //console.log(sessionDB[sID], sID)
-
-    return completion.data.choices[0].message;
+    try {
+        const completion = await openai.createChatCompletion({
+            model: "gpt-3.5-turbo",
+            messages: sessionDB[sID],
+        });
+        console.log("openAI API Call successful");
+        old_message = sessionDB[sID];
+        old_message.push(completion.data.choices[0].message);
+        sessionDB[sID] = old_message;
+        return completion.data.choices[0].message;
+    } catch {
+        throw new Err("Error in API-Call; check getCompletion()s");
+    }
 }
 function generateID() {
     const timestamp = new Date().getTime();
@@ -91,50 +80,74 @@ function generateID() {
     return `${timestamp}-${randomNum}`;
 }
 
-
 app.use(express.json())
 
 app.get('/', async (request, response) => {
-    response.send(await readFile('./home.html', 'utf8'));
+    try {
+        response.send(await readFile('./home.html', 'utf8'));
+    } catch {
+        console.error('An error occurred:', error.message);
+        response.status(500).send('An error occurred while loading the page. Please try again later.');
+    }
 });
 
 app.post('/input', async (request, response) => {
-    //console.log(request.body)
     if (!request.body) {
-        response.status(418).send();
+        response.status(400).send();
         return;
     }
-    console.log('Body:', request.body)
-    console.log("sessionID: ", request.body['sessionID']);
-    console.log("userID: ", request.body['userID']);
-    console.log(request.body['input']['value']);
-    const completionMessage = await getCompletion(request.body['input']['value'], request.body['sessionID']);
-    response.send(completionMessage);
-    console.log("API response sucessfully sent out")
+    try {
+        const completionMessage = await getCompletion(request.body['input']['value'], request.body['sessionID']);
+        response.send(completionMessage);
+        console.log("Response sucessfully sent out")
+    } catch {
+        response.status(500).send('An error occurred while loading the answer. Please try again later.');
+    }
+
 });
 
 app.get('/getSessionID', async (request, response) => {
-    const sessionId = generateID();
-    response.send(sessionId);
-    console.log('Session ID sent to User:', sessionId);
+    try {
+        const sessionId = generateID();
+        response.send(sessionId);
+        console.log('Session ID sent to User:', sessionId);
+    } catch {
+        response.status(500).send('An error occurred while loading the sessionID. Please try again later.');
+    }
 })
 
 app.get('/getUserID', async (request, response) => {
-    const userID = generateID();
-    response.send(userID);
-    console.log('UserID sent to User:', userID);
+    try {
+        const userID = generateID();
+        response.send(userID);
+        console.log('UserID sent to User:', userID);
+    } catch {
+        response.status(500).send('An error occurred while loading the sessionID. Please try again later.');
+    }
 })
 
 app.get('/stylesheet.css', async (request, response) => {
-    response.send(styleSheet);
-    console.log("Supplied Style Sheet");
+    try {
+        response.send(styleSheet);
+        console.log("Supplied Style Sheet");
+    } catch {
+        response.status(500).send('An error occurred while loading the answer. Please try again later.');
+    }
 })
 
 app.get('/default_theme.css', async (request, response) => {
-    response.send(defaultTheme);
-    console.log("Supplied Style Sheet");
+    try {
+        response.send(defaultTheme);
+        console.log("Supplied Style Sheet");
+    } catch {
+        response.status(500).send('An error occurred while loading the answer. Please try again later.');
+    }
 })
 
 var sessionDB = { sID: { 'role': "user", "content": "Repeat: How can I help you?" } };
 
-app.listen(process.env.PORT || 3001, () => console.log('App available at http://localhost:3001'))
+try {
+    app.listen(process.env.PORT || 3001, () => console.log('App available at http://localhost:3001'))
+} catch {
+    throw err('Can not start app.listen');
+}
