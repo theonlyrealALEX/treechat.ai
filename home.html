@@ -127,14 +127,14 @@
                     placeholder: 'Enter your Question'
                 }
             })
-                .then((text) => {
+                /*.then((text) => {
                     botui.message.add({
                         loading: true, //TRUE makes a loading animation, but i won't go away when the message arrives, so sth has to be done about it
                         human: false,
                         content: "",
                     })
-                    return text;
-                })
+                    return text;//
+                })*/
                 .then((text) => getGPTResponse(text))
                 .then((gptOutput) => {
                     const contentGPT = gptOutput['content']
