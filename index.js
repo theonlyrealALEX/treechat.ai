@@ -81,11 +81,11 @@ async function getCompletion(inputMessage, sID) {
 
     old_message.push(completion.data.choices[0].message);
     sessionDB[sID] = old_message;
-    console.log(sessionDB[sID], sID)
+    //console.log(sessionDB[sID], sID)
 
     return completion.data.choices[0].message;
 }
-function generateSessionId() {
+function generateID() {
     const timestamp = new Date().getTime();
     const randomNum = Math.random().toString(36).substring(2);
     return `${timestamp}-${randomNum}`;
@@ -104,18 +104,25 @@ app.post('/input', async (request, response) => {
         response.status(418).send();
         return;
     }
-    console.log('Body:')
-    console.log(request.body['sID']);
+    console.log('Body:', request.body)
+    console.log("sessionID: ", request.body['sessionID']);
+    console.log("userID: ", request.body['userID']);
     console.log(request.body['input']['value']);
-    const completionMessage = await getCompletion(request.body['input']['value'], request.body['sID']);
+    const completionMessage = await getCompletion(request.body['input']['value'], request.body['sessionID']);
     response.send(completionMessage);
     console.log("API response sucessfully sent out")
 });
 
 app.get('/getSessionID', async (request, response) => {
-    const sessionId = generateSessionId();
-    console.log('Session ID sent to User:', sessionId);
+    const sessionId = generateID();
     response.send(sessionId);
+    console.log('Session ID sent to User:', sessionId);
+})
+
+app.get('/getUserID', async (request, response) => {
+    const userID = generateID();
+    response.send(userID);
+    console.log('UserID sent to User:', userID);
 })
 
 app.get('/stylesheet.css', async (request, response) => {
