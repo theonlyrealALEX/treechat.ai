@@ -34,6 +34,8 @@
         const currentAPIAddress = localAPIAddress;
 
         var cookiesAccepted = true;
+        const emptyUserID = "emptyUserID"
+
 
         async function getSessionID() {
             try {
@@ -78,13 +80,22 @@
         }
 
         async function getGPTResponse(input) {
+            console.log(input);
             try {
+                const uID = function () {
+                    if (cookiesAccepted) {
+                        return getCookie('userID');
+                    } else {
+                        return uemptyUserID;
+                    }
+                }
+
                 const response = await fetch(currentAPIAddress + "/input", {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ input, sessionID: getCookie('sessionID'), userID: getCookie('userID') })
+                    body: JSON.stringify({ input, sessionID: getCookie('sessionID'), userID: uID })
                 });
                 const data = await response.json();
                 return data;
@@ -121,42 +132,71 @@
             document.cookie = name + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
         }
 
+        let loadingMessageIndex; // Add this new variable
+
         function sendMessage() {
             botui.action.text({
                 action: {
                     placeholder: 'Enter your Question'
                 }
             })
-                /*.then((text) => {
-                    botui.message.add({
-                        loading: true, //TRUE makes a loading animation, but i won't go away when the message arrives, so sth has to be done about it
+                .then((text) => {
+                    return botui.message.add({
+                        loading: true,
                         human: false,
                         content: "",
-                    })
-                    return text;//
-                })*/
+                    }).then((index) => {
+                        loadingMessageIndex = index;
+                        return text;
+                    });
+                })
                 .then((text) => getGPTResponse(text))
                 .then((gptOutput) => {
                     const contentGPT = gptOutput['content']
-                    botui.message.add({
+                    botui.message.update(loadingMessageIndex, {
                         loading: false,
                         human: false,
                         content: contentGPT,
-                    })
-                    sendMessage();
+                    }).then(() => {
+                        sendMessage();
+                    });
                 })
         }
-        botui.message.add({
-            content: "Welcome to TreeChat.ai."
+
+        botui.message.bot({
+            content: 'Stimmen Sie der Nutztung von Cookies zu?'
         })
-            .then(function () {
-                botui.message.add({
-                    content: "Ask me some questions about the Pasinger Arcaden."
-                })
+
+            .then(() => {
+                return botui.action.button({
+                    action: [
+                        { text: 'Ja', value: true },
+                        { text: 'Nein', value: false },
+                    ]
+                });
             })
             .then(getUserID())
             .then(getSessionID())
-            .then(sendMessage())
+            .then(function () {
+                return botui.message.add({
+                    loading: true,
+                    human: false,
+                    content: "",
+                }).then((index) => {
+                    loadingMessageIndex = index;
+                    return getGPTResponse({ type: 'text', value: 'Welcome the user to treechat.de. Introduce them to your assistance capabilities in relation to your Workplace. Keep it short. Use their language: ' + navigator.language || navigator.userLanguage });
+                });
+            })
+            .then(gptOutput => {
+                const contentGPT = gptOutput['content'];
+                botui.message.update(loadingMessageIndex, {
+                    loading: false,
+                    human: false,
+                    content: contentGPT,
+                }).then(() => {
+                    sendMessage();
+                });
+            })
     </script>
 </body>
 

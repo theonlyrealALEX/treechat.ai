@@ -146,8 +146,27 @@ app.get('/default_theme.css', async (request, response) => {
 
 var sessionDB = { sID: { 'role': "user", "content": "Repeat: How can I help you?" } };
 
+function appendAndSaveDataToFile(filePath, newData) {
+    const dataToSave = JSON.stringify(newData, null, 2) + ',\n';
+    fs.appendFile(filePath, dataToSave, (err) => {
+        if (err) {
+            console.error('Error while appending data to file:', err);
+        } else {
+            console.log('Data appended successfully');
+        }
+    });
+}
+
+function handleExit() {
+    console.log('Terminating server...');
+    appendAndSaveDataToFile('./sessionDB.json', sessionDB);
+    process.exit();
+}
+
+process.on('SIGINT', handleExit);
+process.on('SIGTERM', handleExit);
 try {
     app.listen(process.env.PORT || 3001, () => console.log('App available at http://localhost:3001'))
 } catch {
-    throw err('Can not start app.listen');
+    throw err('Can not start app.listen()');
 }
