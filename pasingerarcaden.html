@@ -33,6 +33,8 @@
         const localAPIAddress = 'http://localhost:3001'
         const currentAPIAddress = localAPIAddress;
 
+        const currentMall = "pasingerarcaden"
+
         var cookiesAccepted = true;
         const emptyUserID = "emptyUserID"
 
@@ -90,7 +92,7 @@
                     }
                 }
 
-                const response = await fetch(currentAPIAddress + "/input", {
+                const response = await fetch(currentAPIAddress + "/" + currentMall + "/input", {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'

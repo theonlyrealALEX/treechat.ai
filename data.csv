@@ -1,3 +1,5 @@
+list: """
+
 'Shop Name', 'Opening Times', 'Level'
 'ALDI SÜD', 'Von 09:00 bis 20:00', 'Level -1'
 'ANKERKRAUT', 'Von 09:30 bis 20:00', 'Level -1'
@@ -104,3 +106,4 @@
 'ZERO', 'Von 09:30 bis 20:00', 'Level 0'
 '21°C ASIA FEINKOST', 'Von 09:30 bis 20:00', 'Level -1'
 '7CAMICIE', 'Von 09:30 bis 20:00', 'Level 0'
+"""
