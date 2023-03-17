@@ -42,26 +42,37 @@ const defaultTheme = fs.readFileSync('default_theme.css', 'utf8', (err, data) =>
     }
 });
 
-function saveSessionDataToCSV(filePath, sessionDataArray) {
+async function saveSessionDataToCSV(filePath, sessionDataArray) {
+    const existingData = await fs.promises.readFile(filePath, 'utf8').catch((err) => {
+        console.error('Error reading the CSV file:', err);
+    });
+
+    const existingLines = existingData.split('\n');
+
     const dataToSave = sessionDataArray
         .filter(({ sessionID }) => sessionID !== 'sID') // Exclude session data with sessionID equal to 'sID'
-        .map(({ sessionID, messages }) => {
-            const sessionMessages = messages
+        .flatMap(({ sessionID, messages }) => {
+            return messages
                 .filter(msg => msg.role !== 'system') // Filter out system messages
-                .map(msg => `"${sessionID}","${msg.role}","${msg.content.replace(/"/g, '""')}"`)
-                .join('\n');
-            return sessionMessages;
+                .map(msg => ({ line: `"${sessionID}","${msg.role}","${msg.content.replace(/"/g, '""')}"`, sessionID }));
         })
-        .join('\n\n');
+        .filter(({ line }) => !existingLines.includes(line)) // Filter out lines already in the CSV
+        .map(({ line }) => line)
+        .join('\n');
 
-    fs.appendFile(filePath, `\n${dataToSave}`, (err) => {
-        if (err) {
-            console.error('Error while appending data to file:', err);
-        } else {
-            console.log('Data appended successfully');
-        }
-    });
+    if (dataToSave.length > 0) {
+        fs.appendFile(filePath, `\n${dataToSave}`, (err) => {
+            if (err) {
+                console.error('Error while appending data to file:', err);
+            } else {
+                console.log('Data appended successfully');
+            }
+        });
+    } else {
+        console.log('No new data to append');
+    }
 }
+
 
 
 
