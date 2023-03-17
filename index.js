@@ -200,18 +200,29 @@ app.get('/default_theme.css', async (request, response) => {
 var sessionDB = { sID: [{ 'role': "user", "content": "Repeat: How can I help you?" }] };
 
 
-function appendAndSaveDataToFile(filePath, newData) {
-    const dataToSave = JSON.stringify(newData, null, 2) + ',\n';
-    fs.appendFile(filePath, dataToSave, (err) => {
-        if (err) {
-            console.error('Error while appending data to file:', err);
-        } else {
-            console.log('Data appended successfully');
+app.get('/downloadsessionfile', async (request, response) => {
+    try {
+        const sessionDBFilePath = 'sessionData.csv';
+        if (!fs.existsSync(sessionDBFilePath)) {
+            response.status(404).send('Session file not found');
+            return;
         }
-    });
-}
 
-const sessionDataSaveInterval = 10000;//1 * 60 * 1000; // Save every 5 minutes
+        response.setHeader('Content-Disposition', `attachment; filename=${path.basename(sessionDBFilePath)}`);
+        response.setHeader('Content-Type', 'text/csv');
+
+        const readStream = fs.createReadStream(sessionDBFilePath);
+        readStream.pipe(response);
+
+        console.log("Session file downloaded");
+    } catch (error) {
+        console.error('An error occurred while downloading the session file:', error.message);
+        response.status(500).send('An error occurred while downloading the session file. Please try again later.');
+    }
+});
+
+
+const sessionDataSaveInterval = 60 * 60 * 1000;
 setInterval(() => {
     const sessionDataArray = Object.entries(sessionDB).map(([sessionID, messages]) => {
         return { sessionID, messages };
