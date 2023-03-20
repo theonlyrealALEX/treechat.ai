@@ -1,7 +1,7 @@
 <html>
 
 <head>
-    <title>treechat.ai</title>
+    <title>treechat.de</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="http://localhost:3001/stylesheet.css" />
     <link rel="stylesheet" href="http://localhost:3001/default_theme.css" />
@@ -35,7 +35,7 @@
 
         const currentMall = "pasingerarcaden"
 
-        var cookiesAccepted = true;
+        var cookiesAccepted = true; //todo: implement cookies true/false
         const emptyUserID = "emptyUserID"
 
 
@@ -173,7 +173,7 @@
                 return botui.action.button({
                     action: [
                         { text: 'Ja', value: true },
-                        { text: 'Nein', value: false },
+                        { text: 'Nein', value: true }, //change back to false in production sjjsjsj
                     ]
                 });
             })

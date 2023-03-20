@@ -1,12 +1,16 @@
 const { response } = require('express');
 const express = require('express');
-const { IncomingMessage, request } = require('http');
-const { readFile } = require('fs').promises;
-const { Configuration, OpenAIApi } = require("openai");
-const { apiKey } = require('./api_key.js');
 const fs = require('fs');
+const { readFile } = require('fs').promises;
 const path = require('path');
 const { Parser } = require('json2csv');
+const { IncomingMessage, request } = require('http');
+
+//openAI
+const { Configuration, OpenAIApi } = require("openai");
+const { apiKey } = require('./api_key.js');
+
+//express
 const app = express();
 const configuration = new Configuration({
     apiKey: apiKey,
@@ -18,7 +22,6 @@ var serviceAccount = require("./serviceAccountKey.json");
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount)
 });
-
 const firebaseDB = admin.firestore();
 
 async function uploadToFirebase(sessionID, newData) {
@@ -42,11 +45,6 @@ async function uploadToFirebase(sessionID, newData) {
         console.error("Error uploading data to Firebase:", error);
     }
 }
-
-let sessionHistory = firebaseDB.collection("sessionHistory");
-sessionHistory.get().then((querySnapshot) => {
-    querySnapshot.forEach(document => { console.log(document.data()) })
-})
 
 const dataPA = fs.readFileSync('data.csv', 'utf8', (err, data) => {
     if (err) {
@@ -77,37 +75,6 @@ const defaultTheme = fs.readFileSync('default_theme.css', 'utf8', (err, data) =>
         return;
     }
 });
-
-async function saveSessionDataToCSV(filePath, sessionDataArray) {
-    const existingData = await fs.promises.readFile(filePath, 'utf8').catch((err) => {
-        console.error('Error reading the CSV file:', err);
-    });
-
-    const existingLines = existingData.split('\n');
-
-    const dataToSave = sessionDataArray
-        .filter(({ sessionID }) => sessionID !== 'sID') // Exclude session data with sessionID equal to 'sID'
-        .flatMap(({ sessionID, messages }) => {
-            return messages
-                .filter(msg => msg.role !== 'system') // Filter out system messages
-                .map(msg => ({ line: `"${sessionID}","${msg.role}","${msg.content.replace(/"/g, '""')}"`, sessionID }));
-        })
-        .filter(({ line }) => !existingLines.includes(line)) // Filter out lines already in the CSV
-        .map(({ line }) => line)
-        .join('\n');
-
-    if (dataToSave.length > 0) {
-        fs.appendFile(filePath, `\n${dataToSave}`, (err) => {
-            if (err) {
-                console.error('Error while appending data to file:', err);
-            } else {
-                console.log('Data appended successfully');
-            }
-        });
-    } else {
-        console.log('No new data to append');
-    }
-}
 
 var initialMessage = async function (intialMessageDirectory) {
     try {
@@ -226,55 +193,16 @@ app.get('/default_theme.css', async (request, response) => {
     }
 })
 
-//var sessionDB = { sID: { 'role': "user", "content": "Repeat: How can I help you?" } };
 var sessionDB = { sID: [{ 'role': "user", "content": "Repeat: How can I help you?" }] };
-
-
-app.get('/downloadsessionfile', async (request, response) => {
-    try {
-        const sessionDBFilePath = 'sessionData.csv';
-        if (!fs.existsSync(sessionDBFilePath)) {
-            response.status(404).send('Session file not found');
-            return;
-        }
-
-        response.setHeader('Content-Disposition', `attachment; filename=${path.basename(sessionDBFilePath)}`);
-        response.setHeader('Content-Type', 'text/csv');
-
-        const readStream = fs.createReadStream(sessionDBFilePath);
-        readStream.pipe(response);
-
-        console.log("Session file downloaded");
-    } catch (error) {
-        console.error('An error occurred while downloading the session file:', error.message);
-        response.status(500).send('An error occurred while downloading the session file. Please try again later.');
-    }
-});
-
-
-const sessionDataSaveInterval = 60 * 60 * 1000;
-setInterval(() => {
-    const sessionDataArray = Object.entries(sessionDB).map(([sessionID, messages]) => {
-        return { sessionID, messages };
-    });
-    saveSessionDataToCSV('sessionData.csv', sessionDataArray);
-}, sessionDataSaveInterval);
-
-
-
-
 
 function handleExit() {
     console.log('Terminating server...');
-    const sessionDataArray = Object.entries(sessionDB).map(([sessionID, messages]) => {
-        return { sessionID, messages };
-    });
-    saveSessionDataToCSV('sessionData.csv', sessionDataArray);
     process.exit();
 }
 
 process.on('SIGINT', handleExit);
 process.on('SIGTERM', handleExit);
+
 try {
     app.listen(process.env.PORT || 3001, () => console.log('App available at http://localhost:3001'))
 } catch {
