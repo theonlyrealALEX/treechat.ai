@@ -88,7 +88,9 @@ var initialMessage = async function (intialMessageDirectory) {
 };
 
 async function getCompletion(inputMessage, sID, location) {
+    console.log("trying to configure openAI API.")
     const openai = new OpenAIApi(configuration);
+    console.log("openAI API configured.")
     try {
         old_message = sessionDB[sID];
         old_message.push({ 'role': "user", "content": inputMessage });
@@ -99,6 +101,7 @@ async function getCompletion(inputMessage, sID, location) {
         sessionDB[sID] = initialMessages;
     }
     try {
+        console.log("trying openAI API Call")
         const completion = await openai.createChatCompletion({
             model: "gpt-3.5-turbo",
             messages: sessionDB[sID],
@@ -111,7 +114,7 @@ async function getCompletion(inputMessage, sID, location) {
         uploadToFirebase(sID, nonSystemMessages);
         return completion.data.choices[0].message;
     } catch {
-        throw new Err("Error in API-Call; check getCompletion()s");
+        throw new Err("Error in API-Call; check getCompletion()");
     }
 }
 function generateID() {
