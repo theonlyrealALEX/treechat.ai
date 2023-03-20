@@ -12,6 +12,28 @@ const configuration = new Configuration({
     apiKey: apiKey,
 });
 
+//firebase:
+var admin = require("firebase-admin");
+var serviceAccount = require("./serviceAccountKey.json");
+admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount)
+});
+
+const db = admin.firestore();
+let customerRef = db.collection("sessionHistory");
+
+const dataTest = {
+    sessionID: "2",
+    type: "user",
+    message: "this is the second test"
+}
+
+db.collection("sessionHistory").doc("3").set(dataTest)
+
+customerRef.get().then((querySnapshot) => {
+    querySnapshot.forEach(document => { console.log(document.data()) })
+})
+
 const dataPA = fs.readFileSync('data.csv', 'utf8', (err, data) => {
     if (err) {
         console.error('An error occurred while reading the Data file:', err);
