@@ -3,8 +3,10 @@
 <head>
     <title>treechat.de</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <link rel="stylesheet" href="http://localhost:3001/stylesheet.css" />
     <link rel="stylesheet" href="http://localhost:3001/default_theme.css" />
+
 
 </head>
 
@@ -21,6 +23,9 @@
 
             <link rel="stylesheet" href="https://tree-chat-ai.ey.r.appspot.com/stylesheet.css" />
             <link rel="stylesheet" href="https://tree-chat-ai.ey.r.appspot.com/default_theme.css" />
+
+            <link rel="stylesheet" href="https://treechat.de/stylesheet.css" />
+            <link rel="stylesheet" href="https://treechat.de/default_theme.css" />
         */
 
         //https://cdn.jsdelivr.net/npm/botui/build/botui.min.css
@@ -29,11 +34,11 @@
         var botui = new BotUI('Tree');
         var chat_history = new String("")
 
-        const treeAPIAddress = 'treechat.de'
+        const treeAPIAddress = 'https://treechat.de'
         const localAPIAddress = 'http://localhost:3001'
         const currentAPIAddress = localAPIAddress;
 
-        const currentMall = "localAPIAddress"
+        const currentMall = "pasingerarcaden"
 
         var cookiesAccepted = true; //todo: implement cookies true/false
         const emptyUserID = "emptyUserID"
@@ -92,6 +97,7 @@
                     }
                 }
 
+                console.log("sending out API request")
                 const response = await fetch(currentAPIAddress + "/" + currentMall + "/input", {
                     method: 'POST',
                     headers: {

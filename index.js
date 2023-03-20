@@ -207,7 +207,7 @@ process.on('SIGINT', handleExit);
 process.on('SIGTERM', handleExit);
 
 try {
-    app.listen(process.env.PORT || 3001, () => console.log('App available at http://localhost:3001'))
+    app.listen(process.env.PORT || 3001, () => console.log('App available at https://localhost:3001'))
 } catch {
     throw err('Can not start app.listen()');
 }
