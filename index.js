@@ -19,18 +19,32 @@ admin.initializeApp({
     credential: admin.credential.cert(serviceAccount)
 });
 
-const db = admin.firestore();
-let customerRef = db.collection("sessionHistory");
+const firebaseDB = admin.firestore();
 
-const dataTest = {
-    sessionID: "2",
-    type: "user",
-    message: "this is the second test"
+async function uploadToFirebase(sessionID, newData) {
+    try {
+        // Get the data for a specific sessionID
+        const sessionDocRef = firebaseDB.collection("sessionHistory").doc(sessionID);
+        const sessionDoc = await sessionDocRef.get();
+
+        let mergedData = newData;
+
+        // If the session exists in Firestore, merge the existing data with newData
+        if (sessionDoc.exists) {
+            mergedData = [...sessionDoc.data().messages, ...newData];
+        }
+
+        // Upload the merged data back to Firestore
+        await sessionDocRef.set({ messages: mergedData });
+
+        console.log("Data successfully uploaded to Firebase for session ID:", sessionID);
+    } catch (error) {
+        console.error("Error uploading data to Firebase:", error);
+    }
 }
 
-db.collection("sessionHistory").doc("3").set(dataTest)
-
-customerRef.get().then((querySnapshot) => {
+let sessionHistory = firebaseDB.collection("sessionHistory");
+sessionHistory.get().then((querySnapshot) => {
     querySnapshot.forEach(document => { console.log(document.data()) })
 })
 
@@ -95,14 +109,6 @@ async function saveSessionDataToCSV(filePath, sessionDataArray) {
     }
 }
 
-
-
-
-
-
-
-
-
 var initialMessage = async function (intialMessageDirectory) {
     try {
         return [
@@ -134,6 +140,8 @@ async function getCompletion(inputMessage, sID, location) {
         old_message = sessionDB[sID];
         old_message.push(completion.data.choices[0].message);
         sessionDB[sID] = old_message;
+        const nonSystemMessages = sessionDB[sID].filter(message => message.role !== "system");
+        uploadToFirebase(sID, nonSystemMessages);
         return completion.data.choices[0].message;
     } catch {
         throw new Err("Error in API-Call; check getCompletion()s");
