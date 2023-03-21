@@ -53,14 +53,14 @@ function getData(location, type) {
 
 const commandDB = { "PasingerArcaden": { 'data': getData('pasingerarcaden', 'data.csv'), 'setUpCommand': getData('pasingerarcaden', 'set_up_command') } }
 
-const styleSheet = fs.readFileSync('stylesheet.css', 'utf8', (err, data) => {
+const styleSheet = fs.readFileSync('./ressources/stylesheet.css', 'utf8', (err, data) => {
     if (err) {
         console.error('An error occurred while reading the Stylesheet file:', err);
         return;
     }
 });
 
-const defaultTheme = fs.readFileSync('default_theme.css', 'utf8', (err, data) => {
+const defaultTheme = fs.readFileSync('./ressources/default_theme.css', 'utf8', (err, data) => {
     if (err) {
         console.error('An error occurred while reading the Stylesheet file:', err);
         return;
