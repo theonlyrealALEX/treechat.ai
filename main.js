@@ -1,9 +1,20 @@
+if (window.location.pathname === "/") {
+    window.location.replace(window.location.origin + "/pasingerarcaden");
+}
+
+
+
+
 var botui = new BotUI('Tree');
 var chat_history = new String("")
 
 var cookiesAccepted = true;
 const emptyUserID = "emptyUserID";
 
+function getMainWebsiteUrl() {
+    const currentUrl = new URL(window.location.href);
+    return currentUrl.protocol + '//' + currentUrl.host;
+}
 
 async function getSessionID() {
     try {
@@ -11,7 +22,7 @@ async function getSessionID() {
     } catch (err) {
         sID = await (async () => {
             try {
-                const response = await fetch("/getSessionID");
+                const response = await fetch(getMainWebsiteUrl() + "/getSessionID");
                 if (response.ok) {
                     return await response.text();
                 } else {
@@ -33,7 +44,7 @@ async function getUserID() {
     } catch (err) {
         uID = await (async () => {
             try {
-                const response = await fetch("/getUserID");
+                const response = await fetch(getMainWebsiteUrl() + "/getUserID");
                 if (response.ok) {
                     return await response.text();
                 } else {
@@ -59,7 +70,7 @@ async function getGPTResponse(input) {
         }
 
         console.log("sending out API request")
-        const response = await fetch(window.location.href + document.title.split('/')[1] + "/input", {
+        const response = await fetch(window.location.href + "/input", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -102,6 +113,7 @@ function deleteCookie(name) {
 }
 
 let loadingMessageIndex; // Add this new variable
+
 
 function sendMessage() {
     botui.action.text({
