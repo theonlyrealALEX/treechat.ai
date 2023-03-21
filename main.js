@@ -2,9 +2,6 @@ if (window.location.pathname === "/") {
     window.location.replace(window.location.origin + "/pasingerarcaden");
 }
 
-
-
-
 var botui = new BotUI('Tree');
 var chat_history = new String("")
 
@@ -24,6 +21,7 @@ async function getSessionID() {
             try {
                 const response = await fetch(getMainWebsiteUrl() + "/getSessionID");
                 if (response.ok) {
+                    console.log(response.text)
                     return await response.text();
                 } else {
                     console.error("Error fetching session ID:", response.status, response.statusText);
@@ -68,7 +66,6 @@ async function getGPTResponse(input) {
                 return uemptyUserID;
             }
         }
-
         console.log("sending out API request")
         const response = await fetch(window.location.href + "/input", {
             method: 'POST',
@@ -156,8 +153,10 @@ botui.message.bot({
             ]
         });
     })
-    .then(getUserID())
-    .then(getSessionID())
+    .then(async function () {
+        await getUserID();
+        await getSessionID()
+    })
     .then(function () {
         return botui.message.add({
             loading: true,

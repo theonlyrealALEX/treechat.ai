@@ -24,6 +24,7 @@ admin.initializeApp({
 const firebaseDB = admin.firestore();
 
 async function uploadToFirebase(sessionID, newData) {
+    console.log("sessionID: ",sessionID)
     try {
         const sessionDocRef = firebaseDB.collection("sessionHistory").doc(sessionID);
         const sessionDoc = await sessionDocRef.get();
