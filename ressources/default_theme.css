@@ -58,6 +58,7 @@
     background-color: transparent;
     color: #595a5a;
     border-bottom: 1px solid #919292;
+    width: 100%;
 }
 
 .botui-actions-text-submit {
