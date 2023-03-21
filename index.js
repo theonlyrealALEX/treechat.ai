@@ -3,8 +3,7 @@ const express = require('express');
 const fs = require('fs');
 const { readFile } = require('fs').promises;
 const path = require('path');
-const { Parser } = require('json2csv');
-const { IncomingMessage, request } = require('http');
+const { IncomingMessage, request } = require('https');
 
 //openAI
 const { Configuration, OpenAIApi } = require("openai");
@@ -26,18 +25,15 @@ const firebaseDB = admin.firestore();
 
 async function uploadToFirebase(sessionID, newData) {
     try {
-        // Get the data for a specific sessionID
         const sessionDocRef = firebaseDB.collection("sessionHistory").doc(sessionID);
         const sessionDoc = await sessionDocRef.get();
 
         let mergedData = newData;
 
-        // If the session exists in Firestore, merge the existing data with newData
         if (sessionDoc.exists) {
             mergedData = [...sessionDoc.data().messages, ...newData];
         }
 
-        // Upload the merged data back to Firestore
         await sessionDocRef.set({ messages: mergedData });
 
         console.log("Data successfully uploaded to Firebase for session ID:", sessionID);
@@ -46,21 +42,16 @@ async function uploadToFirebase(sessionID, newData) {
     }
 }
 
-const dataPA = fs.readFileSync('data.csv', 'utf8', (err, data) => {
-    if (err) {
-        console.error('An error occurred while reading the Data file:', err);
-        return;
-    }
-});
+function getData(location, type) {
+    return fs.readFileSync('./modules/' + location + '/' + type, 'utf8', (err, data) => {
+        if (err) {
+            console.error('An error occurred while reading the Data file:', err);
+            return;
+        }
+    });
+}
 
-const setUpCommandPA = fs.readFileSync('set_up_command', 'utf8', (err, data) => {
-    if (err) {
-        console.error('An error occurred while reading the Command file:', err);
-        return;
-    }
-});
-
-const commandDB = { "PasingerArcaden": { 'data': dataPA, 'setUpCommand': setUpCommandPA } }
+const commandDB = { "PasingerArcaden": { 'data': getData('pasingerarcaden', 'data.csv'), 'setUpCommand': getData('pasingerarcaden', 'set_up_command') } }
 
 const styleSheet = fs.readFileSync('stylesheet.css', 'utf8', (err, data) => {
     if (err) {
@@ -88,9 +79,7 @@ var initialMessage = async function (intialMessageDirectory) {
 };
 
 async function getCompletion(inputMessage, sID, location) {
-    console.log("trying to configure openAI API.")
     const openai = new OpenAIApi(configuration);
-    console.log("openAI API configured.")
     try {
         old_message = sessionDB[sID];
         old_message.push({ 'role': "user", "content": inputMessage });
@@ -127,7 +116,7 @@ app.use(express.json())
 
 app.get('/', async (request, response) => {
     try {
-        response.send(await readFile('./pasingerarcaden.html', 'utf8'));
+        response.send(await readFile('./modules/pasingerarcaden/pasingerarcaden.html', 'utf8'));
     } catch {
         console.error('An error occurred:', error.message);
         response.status(500).send('An error occurred while loading the page. Please try again later.');
@@ -136,7 +125,7 @@ app.get('/', async (request, response) => {
 
 app.get('/pasingerarcaden', async (request, response) => {
     try {
-        response.send(await readFile('./pasingerarcaden.html', 'utf8'));
+        response.send(await readFile('./modules/pasingerarcaden/pasingerarcaden.html', 'utf8'));
     } catch {
         console.error('An error occurred:', error.message);
         response.status(500).send('An error occurred while loading the page. Please try again later.');
@@ -196,18 +185,20 @@ app.get('/default_theme.css', async (request, response) => {
     }
 })
 
+app.get('/main.js', async (request, response) => {
+    try {
+        response.send(await readFile('./main.js', 'utf8'));
+    } catch (error) {
+        console.error('An error occurred:', error.message);
+        response.status(500).send('An error occurred while loading the main.js file. Please try again later.');
+    }
+});
+
+
 var sessionDB = { sID: [{ 'role': "user", "content": "Repeat: How can I help you?" }] };
 
-function handleExit() {
-    console.log('Terminating server...');
-    process.exit();
-}
-
-process.on('SIGINT', handleExit);
-process.on('SIGTERM', handleExit);
-
 try {
-    app.listen(process.env.PORT || 3001, () => console.log('App available at https://localhost:3001'))
+    app.listen(process.env.PORT || 3000, () => console.log('App available at https://localhost:3000'))
 } catch {
     throw err('Can not start app.listen()');
 }
