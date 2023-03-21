@@ -141,39 +141,58 @@ function sendMessage() {
         })
 }
 
-botui.message.bot({
-    content: 'Stimmen Sie der Nutztung von Cookies zu?'
-})
 
-    .then(() => {
-        return botui.action.button({
-            action: [
-                { text: 'Ja', value: true },
-                { text: 'Nein', value: true }, //change back to false in production sjjsjsj
-            ]
-        });
+function launchBot() {
+    botui.message.bot({
+        content: 'Stimmen Sie der Nutztung von Cookies zu?'
     })
-    .then(async function () {
-        await getUserID();
-        await getSessionID()
-    })
-    .then(function () {
-        return botui.message.add({
-            loading: true,
-            human: false,
-            content: "",
-        }).then((index) => {
-            loadingMessageIndex = index;
-            return getGPTResponse({ type: 'text', value: 'Welcome the user to treechat.de. Introduce them to your assistance capabilities in relation to your Workplace. Keep it short. Use their language: ' + navigator.language || navigator.userLanguage });
-        });
-    })
-    .then(gptOutput => {
-        const contentGPT = gptOutput['content'];
-        botui.message.update(loadingMessageIndex, {
-            loading: false,
-            human: false,
-            content: contentGPT,
-        }).then(() => {
-            sendMessage();
-        });
-    })
+
+        .then(() => {
+            return botui.action.button({
+                action: [
+                    { text: 'Ja', value: true },
+                    { text: 'Nein', value: false }, //change back to false in production sjjsjsj
+                ]
+            });
+        })
+        .then(function (cookieResponse) {
+            if (!cookieResponse.value) {
+                botui.message.add({
+                    loading: false,
+                    human: false,
+                    content: "Ich kann leider ohne Cookies nicht funktionieren 😅",
+                })
+                throw err('Please Accept Cookies');
+            }
+        })
+        .then(async function () {
+            await getUserID();
+            await getSessionID()
+        })
+        .then(function () {
+            return botui.message.add({
+                loading: true,
+                human: false,
+                content: "",
+            }).then((index) => {
+                loadingMessageIndex = index;
+                return getGPTResponse({ type: 'text', value: 'Welcome the user to treechat.de. Introduce them to your assistance capabilities in relation to your Workplace. Keep it short. Use their language: ' + navigator.language || navigator.userLanguage });
+            });
+        })
+        .then(gptOutput => {
+            const contentGPT = gptOutput['content'];
+            botui.message.update(loadingMessageIndex, {
+                loading: false,
+                human: false,
+                content: contentGPT,
+            }).then(() => {
+                sendMessage();
+            });
+        })
+}
+
+try {
+    launchBot();
+} catch {
+    console.log('I need cookies to work :/')
+}
