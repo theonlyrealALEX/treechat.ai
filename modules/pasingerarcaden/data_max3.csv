@@ -1,11 +1,4 @@
-Events:
-"""
-Brax Birthday - 10% discount on Brax watches;
-Fashion-Spring-Event, thursday 30.3 till Saturday 1.4;
-STRELLSON Season Start lottery;
-Contest: Influencers will create a look for 3 selected participants, apply on social media;
-"""
-shops:
+list:
 """
 'Shop Name','Level','Tags'
 'ALDI SÜD','-1','grocery, supermarket, discount'
@@ -115,33 +108,4 @@ shops:
 '21°C ASIA FEINKOST', '-1', 'Asian food, groceries, snacks'
 '7CAMICIE', '0', 'shirts, menswear, fashion'
 """
-Food:
-"""
-"shop name","level","tags","opening times if different to default"
-"Alex","0","restaurant, European","10:00-22:00"
-"Bäckerei Ihle","-1","bakery, German","08:00-20:00"
-"Bäckerei Wimmer","-1","bakery, German","08:00-20:00"
-"Brioche Dorée","0","bakery, French",""
-"Canteen Grill","0","restaurant, Grill","09:30-20:00"
-"Crispy & More","0","fast food, Snacks","09:30-20:00"
-"Deli Tadka","0","restaurant, Indian","09:30-20:00"
-"Dunkin Donuts","0","donuts, American","09:30-20:00"
-"Eiscafé Gelatissimo","0; -1","ice cream, Italian","09:30-20:00"
-"Filos","0","restaurant, Greek","09:30-20:00"
-"Five Guys","0","burger, American","11:30-21:00"
-"Genusswerk München","1","restaurant, German","09:30-20:00"
-"Haiky","0","restaurant, Asian","09:30-20:00"
-"Henry's Deli","0","deli, Sandwiches","09:30-20:00"
-"Hofpfisterei","-1","bakery, German","08:30-20:00"
-"illy","0","coffee, Italian",""
-"Mamma's Pastabar","0","pasta, Italian",""
-"McDonald's","0","fast food, American",""
-"Metzgerei Boneberger","-1","butcher, German","08:00-20:00"
-"Nordsee","0","seafood, German","09:30-20:00"
-"Oliviva","-1","restaurant, Mediterranean","09:30-20:00"
-"Pommes Freunde","0","fast food, Fries","11:00-21:00"
-"Quán Sen","0","restaurant, Vietnamese","09:30-20:00"
-"Starbucks","1","coffee, American","08:00-20:00"
-"Subway","-1","sandwich, American","09:30-20:00"
-"Tea Motion","0","tea, Beverages","09:30-20:00"
-"""
+

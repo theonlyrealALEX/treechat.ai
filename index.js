@@ -24,7 +24,7 @@ admin.initializeApp({
 const firebaseDB = admin.firestore();
 
 async function uploadToFirebase(sessionID, newData) {
-    console.log("sessionID: ",sessionID)
+    console.log("sessionID: ", sessionID)
     try {
         const sessionDocRef = firebaseDB.collection("sessionHistory").doc(sessionID);
         const sessionDoc = await sessionDocRef.get();
@@ -93,7 +93,7 @@ async function getCompletion(inputMessage, sID, location) {
     try {
         console.log("trying openAI API Call")
         const completion = await openai.createChatCompletion({
-            model: "gpt-3.5-turbo",
+            model: "gpt-3.5-turbo", //gpt-3.5-turbo   much better: gpt-4
             messages: sessionDB[sID],
         });
         console.log("openAI API Call successful");
