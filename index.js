@@ -124,6 +124,15 @@ app.get('/', async (request, response) => {
     }
 });
 
+app.get('/impressum', async (request, response) => {
+    try {
+        response.send(await readFile('./impressum.html', 'utf8'));
+    } catch {
+        console.error('An error occurred:', error.message);
+        response.status(500).send('An error occurred while loading the page. Please try again later.');
+    }
+});
+
 app.get('/pasingerarcaden', async (request, response) => {
     try {
         response.send(await readFile('./modules/pasingerarcaden/pasingerarcaden.html', 'utf8'));
