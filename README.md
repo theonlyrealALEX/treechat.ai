@@ -22,6 +22,9 @@ Try these out at [treechat.de](https://treechat.de/pasingerarcaden)!
 In the current implementation (as of April 2023) for the [Pasigner Arcaden](https://goo.gl/maps/recjCyiqaSfVi4Uy5) the chatbot can be querried for Opening Times, Product Categories and Events/Promotions.
 
 ## Technical Implementation
+For the Backend I used a Node.js Server hosted on Google App Engine as well as Firebase for as a Database (Chats, Session Info, etc.).
+
+The Data about the Pasinger Arcaden is in a '.csv'-File in the [modules/pasingerarcaden folder](modules/pasingerarcaden). 
 
 ## Deployment
 
