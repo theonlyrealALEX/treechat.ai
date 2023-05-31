@@ -33,3 +33,4 @@ The Project was designed in a way so that it is fairly easy to edit the data and
 
 ## Lessons learned
 The biggest challenge in this project was to stop GPT from hallucinating. E.g. asking it for the way to the bathroom will generate a response which is almost definetly wrong (Interestingly it was able to generate an accurate description of the way from the S-Bahn Station to the Mall one time). Also some of the inferences of what a store sells where plain out wrong, even when the data was labeled correctly. 
+Because of this high inconsistency the project was deemed as not viable (using GPT for reasoning).
