@@ -1,4 +1,4 @@
-# treechat.ai - A chatbot for querries on data that differs in each deployment and requires logical reasoning
+# treechat.ai - A chatbot for querries on data that differs in each deployment and may be unstrictered and unclean and requires logical reasoning
 ## Descriptiom
 some applications have unstructered data that does include everything. e.g. mcdonalds implirs to a human fast food, but a regular querry wont find mcd if i querry for fast food.
 solution
