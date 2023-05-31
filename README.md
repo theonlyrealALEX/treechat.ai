@@ -1,4 +1,4 @@
-# treechat.ai - A scalable chatbot for querries on specific local data 
+# treechat.ai - A chatbot for querries on data that differs in each deployment and requires logical reasoning
 ## Descriptiom
 
 
