@@ -17,7 +17,7 @@ Example Querries:
 - Are there any vegetarian restaurants in this mall?
 - What events or promotions are happening in the mall today?
 
-Try these out at [treechat.de](treechat.de)!
+Try these out at [treechat.de](https://treechat.de/pasingerarcaden)!
 
 
 ## Technical Implementation
