@@ -10,7 +10,15 @@ A practical application for this solution is in the retail industry, specificall
 In such situations, implementing treechat can enhance information retrieval, improve customer service, and provide more accurate responses to queries. By leveraging natural language understanding, we can create a more intuitive and efficient system that is capable of managing complex and incomplete data sets.
 
 ## Features in mall app
-asking questions about anythimg, it will,reply
+Example Querries:
+- Where can I find a leather jacket?
+- I am hungry, where can I get a coffee?
+- What time does the mall close tonight?
+- Are there any vegetarian restaurants in this mall?
+- What events or promotions are happening in the mall today?
+
+Try these out at [treechat.de](treechat.de)!
+
 
 ## Technical Implementation
 
