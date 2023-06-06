@@ -1,4 +1,4 @@
-# treechat.ai - A quickly deployable chatbot for querries on data that differs in each deployment, may be unstructured or unclean and requires logical reasoning in order to be usefull to the user.
+# treechat.ai - A quickly deployable chatbot for queries on data that differs in each deployment, may be unstructured or unclean and requires logical reasoning in order to be usefull to the user.
 
 ## Description
 Applications often contain unstructured data that does not encapsulate all aspects of a concept. For example, a simple keyword search in a restaurant database for 'fast food' may not result in 'McDonald's,' despite the association being obvious to a human. This gap between structured data and human-like understanding can be bridged with advanced AI solutions like GPT.
