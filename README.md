@@ -10,7 +10,7 @@ A practical application for this solution is in the retail industry, specificall
 In such situations, implementing treechat can enhance information retrieval, improve customer service, and provide more accurate responses to queries. By leveraging natural language understanding, we can create a more intuitive and efficient system that is capable of managing complex and incomplete data sets.
 
 ## Features in mall app
-Example Querries:
+Example Queries:
 - Where can I find a leather jacket?
 - I am hungry, where can I get a coffee?
 - What time does the mall close tonight?
@@ -33,4 +33,4 @@ The Project was designed in a way so that it is fairly easy to edit the data and
 
 ## Lessons learned
 The biggest challenge in this project was to stop GPT from hallucinating. E.g. asking it for the way to the bathroom will generate a response which is almost definetly wrong (Interestingly it was able to generate an accurate description of the way from the S-Bahn Station to the Mall one time). Also some of the inferences of what a store sells where plain out wrong, even when the data was labeled correctly. 
-Because of this high inconsistency the project was deemed as not viable (using GPT for reasoning).
+Because of this high inconsistency the project was deemed as not viable.
