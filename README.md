@@ -12,7 +12,7 @@ In such situations, implementing treechat can enhance information retrieval, imp
 ## Features of the Treechat.ai Mall App
 Example Queries:
 - Where can I find a leather jacket?
-- I am hungry, where can I get a coffee?
+- I am hungry, where can I eat something?
 - What time does the mall close tonight?
 - Are there any vegetarian restaurants in this mall?
 - What events or promotions are happening in the mall today?
